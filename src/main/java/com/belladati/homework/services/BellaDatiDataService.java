@@ -60,7 +60,8 @@ public class BellaDatiDataService {
     }
 
     /**
-     * Establishes connection to BellaDati using xAuth.
+     * Establishes connection to BellaDati service.
+     *
      *
      * @throws RuntimeException if connection fails
      */
