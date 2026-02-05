@@ -11,6 +11,8 @@ import com.belladati.sdk.impl.TokenHolder;
 import com.belladati.sdk.util.PaginatedIdList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.annotations.Inject;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,13 +26,6 @@ public class BellaDatiDataService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BellaDatiDataService.class);
 
-    private static final String BELLADATI_URL = "https://belladati-demo.belladati.com/";
-    private static final String CONSUMER_KEY = "demoKey";
-    private static final String CONSUMER_SECRET = "demoSecret";
-    private static final String USERNAME = "domain14";
-    private static final String PASSWORD = "rn7iQzQ87M";
-    private static final String DATASET_ID = "576";
-
     // Column codes for the dataset
     public static final String COL_ID = "L_ID";
     public static final String COL_NAME = "L_NAME";
@@ -38,9 +33,28 @@ public class BellaDatiDataService {
     public static final String COL_ROLE = "L_ROLE";
     public static final String COL_STATUS = "L_STATUS";
 
+    private final String belladatiUrl;
+    private final String consumerKey;
+    private final String consumerSecret;
+    private final String username;
+    private final String password;
+    private final String datasetId;
+
     private BellaDatiService service;
 
-    public BellaDatiDataService() {
+    public BellaDatiDataService(
+            @Inject @Symbol("belladati.url") String belladatiUrl,
+            @Inject @Symbol("belladati.consumerKey") String consumerKey,
+            @Inject @Symbol("belladati.consumerSecret") String consumerSecret,
+            @Inject @Symbol("belladati.username") String username,
+            @Inject @Symbol("belladati.password") String password,
+            @Inject @Symbol("belladati.datasetId") String datasetId) {
+        this.belladatiUrl = belladatiUrl;
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+        this.username = username;
+        this.password = password;
+        this.datasetId = datasetId;
         connect();
     }
 
@@ -51,9 +65,9 @@ public class BellaDatiDataService {
      */
     private void connect() {
         try {
-            LOG.info("Connecting to BellaDati at {}", BELLADATI_URL);
-            BellaDatiConnection connection = BellaDati.connect(BELLADATI_URL);
-            this.service = connection.xAuth(CONSUMER_KEY, CONSUMER_SECRET, USERNAME, PASSWORD);
+            LOG.info("Connecting to BellaDati at {}", belladatiUrl);
+            BellaDatiConnection connection = BellaDati.connect(belladatiUrl);
+            this.service = connection.xAuth(consumerKey, consumerSecret, username, password);
             LOG.info("Successfully connected to BellaDati");
         } catch (Exception e) {
             LOG.error("Failed to connect to BellaDati: {}", e.getMessage(), e);
@@ -68,14 +82,14 @@ public class BellaDatiDataService {
      */
     public List<DataRow> loadData() {
         try {
-            LOG.debug("Loading data from dataset {}", DATASET_ID);
-            PaginatedIdList<DataRow> dataRows = service.getDataSetData(DATASET_ID);
+            LOG.debug("Loading data from dataset {}", datasetId);
+            PaginatedIdList<DataRow> dataRows = service.getDataSetData(datasetId);
             dataRows.load();
             List<DataRow> result = dataRows.toList();
             LOG.debug("Successfully loaded {} rows", result.size());
             return result;
         } catch (Exception e) {
-            LOG.error("Failed to load data from dataset {}: {}", DATASET_ID, e.getMessage(), e);
+            LOG.error("Failed to load data from dataset {}: {}", datasetId, e.getMessage(), e);
             return Collections.emptyList();
         }
     }
@@ -108,7 +122,7 @@ public class BellaDatiDataService {
             row.set(COL_ROLE, role);
             row.set(COL_STATUS, status);
             
-            service.postDataSetData(DATASET_ID, row);
+            service.postDataSetData(datasetId, row);
             LOG.info("Successfully inserted row with ID: {}", id);
         } catch (Exception e) {
             LOG.error("Failed to insert row with ID {}: {}", id, e.getMessage(), e);
@@ -133,7 +147,7 @@ public class BellaDatiDataService {
             TokenHolder tokenHolder = serviceImpl.getTokenHolder();
             
             // Call DELETE /api/dataSets/:dataSetId/data/:rowIds endpoint directly
-            String deleteEndpoint = "api/dataSets/" + DATASET_ID + "/data/" + uid;
+            String deleteEndpoint = "api/dataSets/" + datasetId + "/data/" + uid;
             client.delete(deleteEndpoint, tokenHolder);
             
             LOG.info("Successfully deleted row with UID: {}", uid);
