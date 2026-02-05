@@ -3,7 +3,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 /build/exceptions/
-/.idea/
+.idea/
+*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -34,3 +35,5 @@ bin/
 /target/
 /targetsdk-src/
 
+# Configuration
+src/main/resources/app.properties
