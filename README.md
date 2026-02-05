@@ -57,11 +57,6 @@ mvn jetty:run \
   -Dbelladati.datasetId=576
 ```
 
-### Local Properties Template
-
-Use `src/main/resources/app.properties.example` as a template for your local file.
-The real `src/main/resources/app.properties` is gitignored.
-
 ## Common Commands
 
 ```bash
@@ -70,9 +65,6 @@ mvn compile
 
 # Run tests
 mvn test
-
-# Run a single test class
-mvn test -Dtest=TestClassName
 
 # Build WAR (skip tests)
 mvn package -DskipTests
