@@ -14,6 +14,7 @@ public class AppModule {
 
     public static void bind(ServiceBinder binder) {
         binder.bind(BellaDatiDataService.class);
+        binder.bind(BellaDatiServiceFactory.class, DefaultBellaDatiServiceFactory.class);
     }
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration) {

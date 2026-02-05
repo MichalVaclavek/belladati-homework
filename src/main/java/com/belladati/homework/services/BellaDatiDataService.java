@@ -1,7 +1,5 @@
 package com.belladati.homework.services;
 
-import com.belladati.sdk.BellaDati;
-import com.belladati.sdk.BellaDatiConnection;
 import com.belladati.sdk.BellaDatiService;
 import com.belladati.sdk.dataset.data.DataColumn;
 import com.belladati.sdk.dataset.data.DataRow;
@@ -40,6 +38,8 @@ public class BellaDatiDataService {
     private final String password;
     private final String datasetId;
 
+    private final BellaDatiServiceFactory serviceFactory;
+
     private BellaDatiService service;
 
     public BellaDatiDataService(
@@ -48,14 +48,15 @@ public class BellaDatiDataService {
             @Inject @Symbol("belladati.consumerSecret") String consumerSecret,
             @Inject @Symbol("belladati.username") String username,
             @Inject @Symbol("belladati.password") String password,
-            @Inject @Symbol("belladati.datasetId") String datasetId) {
+            @Inject @Symbol("belladati.datasetId") String datasetId,
+            @Inject BellaDatiServiceFactory serviceFactory) {
         this.belladatiUrl = belladatiUrl;
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.username = username;
         this.password = password;
         this.datasetId = datasetId;
-        connect();
+        this.serviceFactory = serviceFactory;
     }
 
     /**
@@ -66,8 +67,7 @@ public class BellaDatiDataService {
     private void connect() {
         try {
             LOG.info("Connecting to BellaDati at {}", belladatiUrl);
-            BellaDatiConnection connection = BellaDati.connect(belladatiUrl);
-            this.service = connection.xAuth(consumerKey, consumerSecret, username, password);
+            this.service = serviceFactory.create(belladatiUrl, consumerKey, consumerSecret, username, password);
             LOG.info("Successfully connected to BellaDati");
         } catch (Exception e) {
             LOG.error("Failed to connect to BellaDati: {}", e.getMessage(), e);
@@ -82,6 +82,7 @@ public class BellaDatiDataService {
      */
     public List<DataRow> loadData() {
         try {
+            ensureService();
             LOG.debug("Loading data from dataset {}", datasetId);
             PaginatedIdList<DataRow> dataRows = service.getDataSetData(datasetId);
             dataRows.load();
@@ -106,6 +107,7 @@ public class BellaDatiDataService {
      */
     public void insertData(String id, String name, String email, String role, String status) {
         try {
+            ensureService();
             LOG.info("Inserting new row with ID: {}", id);
             List<DataColumn> columns = Arrays.asList(
                 new DataColumn(COL_ID),
@@ -139,6 +141,7 @@ public class BellaDatiDataService {
      */
     public void deleteData(String uid) {
         try {
+            ensureService();
             LOG.info("Deleting row with UID: {}", uid);
             
             // Cast to implementation to access internal client for direct API call
@@ -154,6 +157,12 @@ public class BellaDatiDataService {
         } catch (Exception e) {
             LOG.error("Failed to delete row with UID {}: {}", uid, e.getMessage(), e);
             throw new RuntimeException("Failed to delete data: " + e.getMessage(), e);
+        }
+    }
+
+    private void ensureService() {
+        if (service == null) {
+            connect();
         }
     }
 }
