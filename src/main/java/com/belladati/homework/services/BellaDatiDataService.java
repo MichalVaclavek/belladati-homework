@@ -62,7 +62,6 @@ public class BellaDatiDataService {
     /**
      * Establishes connection to BellaDati service.
      *
-     *
      * @throws RuntimeException if connection fails
      */
     private void connect() {
