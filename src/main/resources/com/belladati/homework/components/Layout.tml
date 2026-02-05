@@ -1,0 +1,23 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<head>
+    <meta charset="UTF-8"/>
+    <title>${title}</title>
+</head>
+<body>
+    <header class="app-header">
+        <nav class="nav">
+            <span class="app-title">BellaDati App</span>
+            <t:pagelink page="index">Index</t:pagelink>
+            <t:pagelink page="datalist">List</t:pagelink>
+        </nav>
+    </header>
+
+    <main class="content">
+        <t:body/>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; BellaDati 2025</p>
+    </footer>
+</body>
+</html>

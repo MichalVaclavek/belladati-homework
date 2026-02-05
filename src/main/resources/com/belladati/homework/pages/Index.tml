@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<head>
+    <title>BellaDati App</title>
+    <link rel="stylesheet" href="${context:css/style.css}"/>
+</head>
+<body>
+    <t:layout>
+        <h1>Welcome to BellaDati Homework App</h1>
+        <p>This application allows you to manage data from the BellaDati Sample List dataset.</p>
+        <nav>
+            <t:pagelink page="datalist">View Data List</t:pagelink> |
+            <t:pagelink page="insert">Insert New Data</t:pagelink>
+        </nav>
+    </t:layout>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<head>
+    <title>Insert Data - BellaDati App</title>
+    <link rel="stylesheet" href="${context:css/style.css}"/>
+</head>
+<body>
+    <t:layout>
+        <div class="header">
+            <h1>Insert data</h1>
+            <t:pagelink page="datalist" class="btn btn-secondary">Back to List</t:pagelink>
+        </div>
+
+        <div t:type="if" t:test="hasError" class="error-message">
+            ${errorMessage}
+        </div>
+
+        <t:form t:id="insertForm" class="insert-form">
+            <div class="form-group">
+                <t:label for="id"/>
+                <t:textfield t:id="id" placeholder="ID"/>
+            </div>
+
+            <div class="form-group">
+                <t:label for="name"/>
+                <t:textfield t:id="name" placeholder="Name"/>
+            </div>
+
+            <div class="form-group">
+                <t:label for="email"/>
+                <t:textfield t:id="email" placeholder="E-mail"/>
+            </div>
+
+            <div class="form-group">
+                <t:label for="status"/>
+                <t:textfield t:id="status" placeholder="Status"/>
+            </div>
+
+            <div class="form-group">
+                <t:label for="role"/>
+                <t:select t:id="role" model="literal:Admin,User,Guest"/>
+            </div>
+
+            <div class="form-actions">
+                <t:submit value="Insert" class="btn btn-primary"/>
+            </div>
+        </t:form>
+    </t:layout>
+</body>
+</html>

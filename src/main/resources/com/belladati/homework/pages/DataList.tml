@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<head>
+    <title>Data List - BellaDati App</title>
+    <link rel="stylesheet" href="${context:css/style.css}"/>
+</head>
+<body>
+    <t:layout>
+        <div class="header">
+            <h1>Data List</h1>
+            <t:pagelink page="insert" class="btn btn-primary">Insert</t:pagelink>
+        </div>
+
+        <div t:type="if" t:test="hasError" class="error-message">
+            ${errorMessage}
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr t:type="loop" t:source="dataRows" t:value="row">
+                    <td>${rowId}</td>
+                    <td>${rowName}</td>
+                    <td>${rowEmail}</td>
+                    <td>${rowRole}</td>
+                    <td>${rowStatus}</td>
+                    <td>
+                        <t:actionlink t:id="delete" context="${rowUid}" class="btn-delete">DELETE</t:actionlink>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </t:layout>
+</body>
+</html>
