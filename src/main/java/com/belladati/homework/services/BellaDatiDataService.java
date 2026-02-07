@@ -3,6 +3,8 @@ package com.belladati.homework.services;
 import com.belladati.sdk.BellaDatiService;
 import com.belladati.sdk.dataset.data.DataColumn;
 import com.belladati.sdk.dataset.data.DataRow;
+import com.belladati.sdk.exception.BellaDatiRuntimeException;
+import com.belladati.sdk.exception.ConnectionException;
 import com.belladati.sdk.impl.BellaDatiClient;
 import com.belladati.sdk.impl.BellaDatiServiceImpl;
 import com.belladati.sdk.impl.TokenHolder;
@@ -13,7 +15,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,23 +63,27 @@ public class BellaDatiDataService {
     /**
      * Establishes connection to BellaDati service.
      *
-     * @throws RuntimeException if connection fails
+     * @throws BellaDatiRuntimeException if connection fails
      */
     private void connect() {
         try {
             LOG.info("Connecting to BellaDati at {}", belladatiUrl);
             this.service = serviceFactory.create(belladatiUrl, consumerKey, consumerSecret, username, password);
             LOG.info("Successfully connected to BellaDati");
+        } catch (BellaDatiRuntimeException e) {
+            LOG.error("Failed to connect to BellaDati: {}", e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             LOG.error("Failed to connect to BellaDati: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to connect to BellaDati API", e);
+            throw new ConnectionException("Failed to connect to BellaDati API", e);
         }
     }
 
     /**
      * Loads all data rows from the dataset.
      *
-     * @return list of data rows, or empty list if loading fails
+     * @return list of data rows
+     * @throws BellaDatiRuntimeException if loading fails
      */
     public List<DataRow> loadData() {
         try {
@@ -89,9 +94,12 @@ public class BellaDatiDataService {
             List<DataRow> result = dataRows.toList();
             LOG.debug("Successfully loaded {} rows", result.size());
             return result;
+        } catch (BellaDatiRuntimeException e) {
+            LOG.error("Failed to load data from dataset {}: {}", datasetId, e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             LOG.error("Failed to load data from dataset {}: {}", datasetId, e.getMessage(), e);
-            return Collections.emptyList();
+            throw new ConnectionException("Failed to load data", e);
         }
     }
 
@@ -103,7 +111,7 @@ public class BellaDatiDataService {
      * @param email  the email value
      * @param role   the role value
      * @param status the status value
-     * @throws RuntimeException if insert operation fails
+     * @throws BellaDatiRuntimeException if insert operation fails
      */
     public void insertData(String id, String name, String email, String role, String status) {
         try {
@@ -126,9 +134,12 @@ public class BellaDatiDataService {
             
             service.postDataSetData(datasetId, row);
             LOG.info("Successfully inserted row with ID: {}", id);
+        } catch (BellaDatiRuntimeException e) {
+            LOG.error("Failed to insert row with ID {}: {}", id, e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             LOG.error("Failed to insert row with ID {}: {}", id, e.getMessage(), e);
-            throw new RuntimeException("Failed to insert data: " + e.getMessage(), e);
+            throw new ConnectionException("Failed to insert data", e);
         }
     }
 
@@ -137,7 +148,7 @@ public class BellaDatiDataService {
      * Uses the REST API endpoint: DELETE /api/dataSets/:id/data/:rowIds
      *
      * @param uid the UID of the row to delete (internal row identifier, not column value)
-     * @throws RuntimeException if delete operation fails
+     * @throws BellaDatiRuntimeException if delete operation fails
      */
     public void deleteData(String uid) {
         try {
@@ -152,11 +163,14 @@ public class BellaDatiDataService {
             // Call DELETE /api/dataSets/:dataSetId/data/:rowIds endpoint directly
             String deleteEndpoint = "api/dataSets/" + datasetId + "/data/" + uid;
             client.delete(deleteEndpoint, tokenHolder);
-            
+
             LOG.info("Successfully deleted row with UID: {}", uid);
+        } catch (BellaDatiRuntimeException e) {
+            LOG.error("Failed to delete row with UID {}: {}", uid, e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             LOG.error("Failed to delete row with UID {}: {}", uid, e.getMessage(), e);
-            throw new RuntimeException("Failed to delete data: " + e.getMessage(), e);
+            throw new ConnectionException("Failed to delete data", e);
         }
     }
 

@@ -11,9 +11,9 @@
             <t:pagelink page="insert" class="btn btn-primary">Insert</t:pagelink>
         </div>
 
-        <div t:type="if" t:test="hasError" class="error-message">
-            ${errorMessage}
-        </div>
+        <t:if test="hasError">
+            <div class="error-message">${errorMessage}</div>
+        </t:if>
 
         <table class="data-table">
             <thead>

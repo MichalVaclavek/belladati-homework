@@ -143,6 +143,11 @@ body {
     font-size: 14px;
 }
 
+.form-group select {
+    padding: 8px 10px;
+    line-height: 1.4;
+}
+
 .form-group input:focus,
 .form-group select:focus {
     outline: none;

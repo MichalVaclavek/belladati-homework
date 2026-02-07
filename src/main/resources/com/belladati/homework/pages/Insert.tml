@@ -11,11 +11,8 @@
             <t:pagelink page="datalist" class="btn btn-secondary">Back to List</t:pagelink>
         </div>
 
-        <div t:type="if" t:test="hasError" class="error-message">
-            ${errorMessage}
-        </div>
-
         <t:form t:id="insertForm" class="insert-form">
+            <t:errors class="error-message"/>
             <div class="form-group">
                 <t:label for="id"/>
                 <t:textfield t:id="id" placeholder="ID"/>

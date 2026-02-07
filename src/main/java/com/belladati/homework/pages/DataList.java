@@ -24,17 +24,24 @@ public class DataList {
     private DataRow row;
 
     @Property
+    private List<DataRow> dataRows;
+
+    @Property
     private String errorMessage;
 
-    public List<DataRow> getDataRows() {
-        return bellaDatiDataService.loadData();
+    void setupRender() {
+        try {
+            dataRows = bellaDatiDataService.loadData();
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+            dataRows = List.of();
+        }
     }
 
     public Object onActionFromDelete(String uid) {
         try {
             bellaDatiDataService.deleteData(uid);
         } catch (Exception e) {
-            LOG.error("Error deleting row with ID {}: {}", uid, e.getMessage());
             errorMessage = "Failed to delete row: " + e.getMessage();
         }
         return DataList.class;
