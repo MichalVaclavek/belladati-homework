@@ -31,6 +31,7 @@ public class DataList {
 
     void setupRender() {
         try {
+            errorMessage = null;
             dataRows = bellaDatiDataService.loadData();
         } catch (Exception e) {
             errorMessage = e.getMessage();

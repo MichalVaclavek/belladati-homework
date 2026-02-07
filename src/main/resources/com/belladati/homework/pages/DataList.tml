@@ -34,7 +34,8 @@
                     <td>${rowRole}</td>
                     <td>${rowStatus}</td>
                     <td>
-                        <t:actionlink t:id="delete" context="${rowUid}" class="btn-delete">DELETE</t:actionlink>
+                        <t:actionlink t:id="delete" context="${rowUid}" class="btn-delete"
+                                      onclick="return confirm('Opravdu chcete smazat tento radek?');">DELETE</t:actionlink>
                     </td>
                 </tr>
             </tbody>

@@ -154,9 +154,14 @@ public class BellaDatiDataService {
         try {
             ensureService();
             LOG.info("Deleting row with UID: {}", uid);
-            
+
             // Cast to implementation to access internal client for direct API call
-            BellaDatiServiceImpl serviceImpl = (BellaDatiServiceImpl) service;
+            if (!(service instanceof BellaDatiServiceImpl serviceImpl)) {
+                throw new UnsupportedOperationException(
+                    "Delete requires BellaDatiServiceImpl, got: " + service.getClass().getName()
+                );
+            }
+
             BellaDatiClient client = serviceImpl.getClient();
             TokenHolder tokenHolder = serviceImpl.getTokenHolder();
             
