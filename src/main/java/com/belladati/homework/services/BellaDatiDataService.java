@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Service for communication with BellaDati API.
- * Handles authentication and data operations for the Sample List dataset.
+ * Handles data operations for the Sample List dataset.
  */
 public class BellaDatiDataService {
 
