@@ -86,9 +86,9 @@ public class BellaDatiDataService {
      * @throws BellaDatiRuntimeException if loading fails
      */
     public List<DataRow> loadData() {
+        ensureService();
+        LOG.debug("Loading data from dataset {}", datasetId);
         try {
-            ensureService();
-            LOG.debug("Loading data from dataset {}", datasetId);
             PaginatedIdList<DataRow> dataRows = service.getDataSetData(datasetId);
             dataRows.load();
             List<DataRow> result = dataRows.toList();
@@ -114,24 +114,23 @@ public class BellaDatiDataService {
      * @throws BellaDatiRuntimeException if insert operation fails
      */
     public void insertData(String id, String name, String email, String role, String status) {
-        try {
-            ensureService();
-            LOG.info("Inserting new row with ID: {}", id);
-            List<DataColumn> columns = Arrays.asList(
+        ensureService();
+        LOG.info("Inserting new row with ID: {}", id);
+        List<DataColumn> columns = Arrays.asList(
                 new DataColumn(COL_ID),
                 new DataColumn(COL_NAME),
                 new DataColumn(COL_EMAIL),
                 new DataColumn(COL_ROLE),
                 new DataColumn(COL_STATUS)
-            );
-            
-            DataRow row = new DataRow(columns);
-            row.set(COL_ID, id);
-            row.set(COL_NAME, name);
-            row.set(COL_EMAIL, email);
-            row.set(COL_ROLE, role);
-            row.set(COL_STATUS, status);
-            
+        );
+
+        DataRow row = new DataRow(columns);
+        row.set(COL_ID, id);
+        row.set(COL_NAME, name);
+        row.set(COL_EMAIL, email);
+        row.set(COL_ROLE, role);
+        row.set(COL_STATUS, status);
+        try {
             service.postDataSetData(datasetId, row);
             LOG.info("Successfully inserted row with ID: {}", id);
         } catch (BellaDatiRuntimeException e) {
@@ -151,20 +150,20 @@ public class BellaDatiDataService {
      * @throws BellaDatiRuntimeException if delete operation fails
      */
     public void deleteData(String uid) {
-        try {
-            ensureService();
-            LOG.info("Deleting row with UID: {}", uid);
+        ensureService();
+        LOG.info("Deleting row with UID: {}", uid);
 
-            // Cast to implementation to access internal client for direct API call
-            if (!(service instanceof BellaDatiServiceImpl serviceImpl)) {
-                throw new UnsupportedOperationException(
+        // Cast to implementation to access internal client for direct API call
+        if (!(service instanceof BellaDatiServiceImpl serviceImpl)) {
+            throw new UnsupportedOperationException(
                     "Delete requires BellaDatiServiceImpl, got: " + service.getClass().getName()
-                );
-            }
+            );
+        }
 
+        try {
             BellaDatiClient client = serviceImpl.getClient();
             TokenHolder tokenHolder = serviceImpl.getTokenHolder();
-            
+
             // Call DELETE /api/dataSets/:dataSetId/data/:rowIds endpoint directly
             String deleteEndpoint = "api/dataSets/" + datasetId + "/data/" + uid;
             client.delete(deleteEndpoint, tokenHolder);
