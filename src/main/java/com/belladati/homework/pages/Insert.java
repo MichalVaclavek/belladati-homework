@@ -1,6 +1,7 @@
 package com.belladati.homework.pages;
 
 import com.belladati.homework.services.BellaDatiDataService;
+import com.belladati.homework.services.BellaDatiDataService.InsertRow;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -39,7 +40,8 @@ public class Insert {
 
     public Object onSuccess() {
         try {
-            bellaDatiDataService.insertData(id, name, email, role, status);
+            InsertRow row = new InsertRow(id, name, email, role, status);
+            bellaDatiDataService.insertData(row);
             return DataList.class;
         } catch (Exception e) {
             insertForm.recordError(e.getMessage());

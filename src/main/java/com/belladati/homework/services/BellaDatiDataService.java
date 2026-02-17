@@ -43,6 +43,9 @@ public class BellaDatiDataService {
 
     private BellaDatiService service;
 
+    public record InsertRow(String id, String name, String email, String role, String status) {
+    }
+
     public BellaDatiDataService(
             @Inject @Symbol("belladati.url") String belladatiUrl,
             @Inject @Symbol("belladati.consumerKey") String consumerKey,
@@ -106,6 +109,15 @@ public class BellaDatiDataService {
     /**
      * Inserts a new data row into the dataset.
      *
+     * @param row the data row values
+     */
+    public void insertData(InsertRow row) {
+        insertData(row.id(), row.name(), row.email(), row.role(), row.status());
+    }
+
+    /**
+     * Inserts a new data row into the dataset.
+     *
      * @param id     the ID value
      * @param name   the name value
      * @param email  the email value
@@ -113,7 +125,7 @@ public class BellaDatiDataService {
      * @param status the status value
      * @throws BellaDatiRuntimeException if insert operation fails
      */
-    public void insertData(String id, String name, String email, String role, String status) {
+    private void insertData(String id, String name, String email, String role, String status) {
         ensureService();
         LOG.info("Inserting new row with ID: {}", id);
         List<DataColumn> columns = Arrays.asList(
